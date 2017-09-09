@@ -18,4 +18,8 @@ Model Implementation:
 9. [CLSTM](https://arxiv.org/abs/1511.08630)
 10. CNN and GRU
 11. [HAN](http://aclweb.org/anthology/N/N16/N16-1174.pdf)
-12. FastText(https://arxiv.org/abs/1607.01759)
+12. [FastText](https://arxiv.org/abs/1607.01759)
+
+To-Do List:
+1. [DCNN](https://arxiv.org/abs/1404.2188)
+2. [Aspect Level Sentiment](http://aclweb.org/anthology/D16-1058)

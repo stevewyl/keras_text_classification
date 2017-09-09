@@ -23,3 +23,5 @@ Model Implementation:
 To-Do List:
 1. [DCNN](https://arxiv.org/abs/1404.2188)
 2. [Aspect Level Sentiment](http://aclweb.org/anthology/D16-1058)
+
+Pre-trained word embedding set download link: [Glove](https://nlp.stanford.edu/projects/glove/)

@@ -30,7 +30,7 @@ from keras.layers import  BatchNormalization
 '''
 tokenizer = TweetTokenizer()
 
-# 出师不利 碰到推文中有逗号，pandas无法解析
+# pandas cannot load data correctly because there are commas in the tweet content
 with open("tweets.csv", "r") as infile, open("quoted.csv", "wb") as outfile:
     reader = csv.reader(infile)
     writer = csv.writer(outfile)
@@ -42,13 +42,13 @@ df = pd.read_csv('quoted.csv')
 
 df.isnull().sum()
 df.Sentiment.value_counts()
-# 发现两个没有正确解析的样本，直接忽略好了
+# find two error rows, just ingore them
 df = df.drop(df.index[[8834,535880]])
 df['Sentiment'] = df['Sentiment'].map(int)
 
 df.reset_index(inplace=True, drop=True)
 df.drop('index', axis=1, inplace=True)
-# 去除无效的列
+# delete useless columns
 df.drop(['ItemID', 'SentimentSource'], axis=1, inplace=True)
 pd.to_pickle(df, 'tweet_dataset.pkl')
 tokenizer = Tokenizer(filters='!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n',lower=True,split=" ")

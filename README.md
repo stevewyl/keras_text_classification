@@ -8,7 +8,7 @@ Three Dataset:
 
 Model Implementation:
 1. NB with TF-IDF
-2. SVM with IF-IDF
+2. SVM with TF-IDF
 3. MLP with OneHot
 4. CNN(LeNet-5)
 5. [TextCNN](https://arxiv.org/abs/1408.5882)

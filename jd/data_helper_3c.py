@@ -2,7 +2,7 @@ import numpy as np
 import re
 
 
-# 清理无效字符
+# clean useless characters
 '''
 html_clean = ['& ldquo ;', '& hellip ;', '& rdquo ;', '& yen ;']
 punctuation_replace = '[，。！？]+'
@@ -17,11 +17,11 @@ def clean(sent):
     sent = re.sub(r'yen', "", sent)
     sent = re.sub(r'⑦', "7", sent)
     sent = re.sub(r'(， ){2,}', "", sent)
-    sent = re.sub(r'(！ ){2,}', "", sent) #去除过多的！，？，。等
+    sent = re.sub(r'(！ ){2,}', "", sent) # delete too many！，？，。等
     sent = re.sub(r'(？ ){2,}', "", sent)
     sent = re.sub(r'(。 ){2,}', "", sent)
-    sent = re.sub(punctuation_remove, "", sent) #去除不需要的标点符号
-    s = ' '.join(sent.split()) #去除多余的空格
+    sent = re.sub(punctuation_remove, "", sent) #delete punctuations
+    s = ' '.join(sent.split()) #delete additional space
     
     return s
     
@@ -33,7 +33,7 @@ def sent_filter(l):
     return l_new
         
 def load_data_and_labels(good_data_file, bad_data_file, mid_data_file):
-    #读取好评、差评评论保存在列表中
+    #load reviews and save them in the list
     good_examples = list(open(good_data_file, "r", encoding='utf-8').readlines())
     good_examples = [s.strip() for s in good_examples]
     bad_examples = list(open(bad_data_file, "r", encoding='utf-8').readlines())
@@ -41,7 +41,7 @@ def load_data_and_labels(good_data_file, bad_data_file, mid_data_file):
     mid_examples = list(open(mid_data_file, "r", encoding='utf-8').readlines())
     mid_examples = [s.strip() for s in mid_examples]
 
-    #调用clean()和sent_filter()函数对评论进行处理，保存在x_text列表中
+    #Call the clean () and sent_filter () functions to process the comments, save them in the x_text list
     good_examples = [clean(sent) for sent in good_examples]
     bad_examples = [clean(sent) for sent in bad_examples]
     mid_examples = [clean(sent) for sent in mid_examples]
@@ -56,13 +56,14 @@ def load_data_and_labels(good_data_file, bad_data_file, mid_data_file):
 
     x_text = good_examples + bad_examples + mid_examples
 
-    #为每个评论添加标签，并保存在y中
+    #Add a label for each comment and save it in y
     good_labels = [[1, 0, 0] for _ in good_examples]
     bad_labels = [[0, 1, 0] for _ in bad_examples]
     mid_labels = [[0, 0, 1] for _ in mid_examples]
     y = np.concatenate([good_labels, bad_labels, mid_labels], 0)
     return [x_text, y]
 
+# when you use tensorflow, you need to generate batches yourself, this function may helpe you
 def batch_iter(data, batch_size, num_epochs, shuffle=True):
     """
     Generates a batch iterator for a dataset.

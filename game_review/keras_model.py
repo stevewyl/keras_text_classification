@@ -72,30 +72,19 @@ for line in f:
     embeddings_index[word] = coefs
 f.close()
  
-# 分词，单词-id词典       
+# take tokens and build word-id dictionary     
 tokenizer = Tokenizer(filters='!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n',lower=True,split=" ")
 tokenizer.fit_on_texts(title)
 vocab = tokenizer.word_index
 
-# 从glove中匹配数据集中每个词的词向量
+# Match the word vector for each word in the data set from Glove
 embedding_matrix = np.zeros((len(vocab) + 1, 300))
 for word, i in vocab.items():
     embedding_vector = embeddings_index.get(word)
     if embedding_vector is not None:
         embedding_matrix[i] = embedding_vector
 
-'''
-vect = CountVectorizer(ngram_range=(1,1), token_pattern=r'\b\w{1,}\b') # 只匹配单个英文单词和数字
-vect.fit(title)
-vocab = vect.vocabulary_
-# 这个函数有问题
-def convert_X_to_X_word_ids(X):
-    return X.apply( lambda x: [vocab[w] for w in [w.lower().strip() for w in x.split()] if w in vocab])
-X_train_word_ids = convert_X_to_X_word_ids(X_train)
-X_test_word_ids  = convert_X_to_X_word_ids(X_test)
-'''
-
-# 匹配模型的输入格式
+# Match the input format of the model
 x_train_word_ids = tokenizer.texts_to_sequences(X_train)
 x_test_word_ids = tokenizer.texts_to_sequences(X_test)
 x_train_padded_seqs = pad_sequences(x_train_word_ids, maxlen=20)
@@ -137,7 +126,7 @@ model.fit(x_train_padded_seqs, y_train,
           epochs=12,
           validation_data=(x_test_padded_seqs, y_test))
 
-# 平均训练时间280-300秒之间
+# Average training time between 280-300 seconds
 # GRU-15-256-256-0.1-0.1     0.4262
 # GRU-18-256-256-0.15-       0.4364
 # GRU-18-256-256-0.2-        0.4305
@@ -180,7 +169,7 @@ model.fit(x_train_padded_seqs, y_train,
           epochs=12,
           validation_data=(x_test_padded_seqs, y_test))
 
-# 平均训练时间40-55秒之间
+# Average training time between 40-55 seconds
 # 32-15-conv*3(128-64-32)-3-0.2    0.4069(same)
 # 32-20-conv*3(128-64-32)-3-0.2    0.4133(same)
 # 32-20-conv*3(128-64-32)-3-0.1    0.4165(same)
@@ -299,7 +288,7 @@ cnn = Convolution1D(256, 3, padding='same', strides = 1, activation='relu')(embe
 new = Reshape(target_shape=(cnn.shape[2].value, cnn.shape[1].value))(cnn)
 
 # CNN-char
-# 重新处理输入
+# Reprocess the input
 # get vocab
 all_sent = []
 for sent in title.tolist():
@@ -419,11 +408,11 @@ model.fit(x_train_padded_seqs, y_train,
 # 0.4487
 
 # fastetxt model
-# 生成输入文本的bi-gram组合词汇
+# Generates the n-gram combination vocabulary for the input text
 n_value = 2
 def create_ngram_set(input_list, ngram_value=n_value):
     return set(zip(*[input_list[i:] for i in range(ngram_value)]))
-# 把生成的各种gram新组合词加入到原先的句子序列中去
+# Add the new n-gram generated words into the original sentence sequence
 def add_ngram(sequences, token_indice, ngram_range=n_value):
     new_sequences = []
     for input_list in sequences:

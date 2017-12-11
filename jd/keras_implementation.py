@@ -14,6 +14,7 @@ from keras.layers import Convolution1D, Flatten, Dropout, MaxPool1D
 from keras.layers import  BatchNormalization
 from sklearn.model_selection import train_test_split
 from data_helper_3c import load_data_and_labels
+import matplotlib.pyplot as plt
 
 good_data_file = "./data/good_cut_jieba.txt"
 bad_data_file = "./data/bad_cut_jieba.txt"
@@ -64,7 +65,7 @@ model1.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
-model1.fit(x_train_padded_seqs, y_train,
+history = model1.fit(x_train_padded_seqs, y_train,
           batch_size=32,
           epochs=5,
           validation_data=(x_test_padded_seqs, y_test))
@@ -82,33 +83,27 @@ model2.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
-history2 = model2.fit(x_train_padded_seqs, y_train,
+history2 = model2.fit(x_train, y_train,
                     batch_size=32,
                     epochs=5,
-                    validation_data=(x_test_padded_seqs, y_test))
-
-model2.compile(loss='categorical_crossentropy',
-              optimizer='adam',
-              metrics=['accuracy'])
-
-model2.fit(x_train, y_train,
-          batch_size=32,
-          epochs=5,
-          validation_data=(x_test, y_test))
+                    validation_data=(x_test, y_test))
 
 # plot accuracy and loss
-import matplotlib.pyplot as plt
-plt.subplot(211)
-plt.title("Accuracy")
-plt.plot(history.history["acc"], color="g", label="Train")
-plt.plot(history.history["val_acc"], color="b", label="Test")
-plt.legend(loc="best")
+def plot_acc_loss(history):
+    plt.subplot(211)
+    plt.title("Accuracy")
+    plt.plot(history.history["acc"], color="g", label="Train")
+    plt.plot(history.history["val_acc"], color="b", label="Test")
+    plt.legend(loc="best")
+    
+    plt.subplot(212)
+    plt.title("Loss")
+    plt.plot(history.history["loss"], color="g", label="Train")
+    plt.plot(history.history["val_loss"], color="b", label="Test")
+    plt.legend(loc="best")
+    
+    plt.tight_layout()
+    plt.show()
 
-plt.subplot(212)
-plt.title("Loss")
-plt.plot(history.history["loss"], color="g", label="Train")
-plt.plot(history.history["val_loss"], color="b", label="Test")
-plt.legend(loc="best")
-
-plt.tight_layout()
-plt.show()
+plot_acc_loss(history)
+plot_acc_loss(history2)

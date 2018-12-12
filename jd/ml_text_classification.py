@@ -15,13 +15,13 @@ import numpy as np
 categories = ['good', 'bad', 'mid']
 
 x_text, y = load_data_and_labels("./data/good_cut_jieba.txt", "./data/bad_cut_jieba.txt", "./data/mid_cut_jieba.txt")
-
 x_train, x_test, y_train, y_test = train_test_split(x_text, y, test_size=0.2, random_state=2017)
-y = y.ravel()
-y_train = y_train.ravel()
-y_test = y_test.ravel()
 
-print("Train/Test split: {:d}/{:d}".format(len(y_train), len(y_test)))
+y = np.argmax(y, axis=-1)
+y_train = np.argmax(y_train, axis=-1)
+y_test = np.argmax(y_test, axis=-1)
+
+print("Train/Test split: {:d}/{:d}".format(y_train.shape[0], y_test.shape[0]))
 
 """ Naive Bayes classifier """
 bayes_clf = Pipeline([('vect', CountVectorizer()),   # Convert a collection of text documents to a matrix of token counts
@@ -51,7 +51,7 @@ print('\n')
 
 """ 10-fold cross vaildation """
 clf_b = make_pipeline(CountVectorizer(), TfidfTransformer(), MultinomialNB())
-clf_s= make_pipeline(CountVectorizer(), TfidfTransformer(), SGDClassifier(loss='hinge', penalty='l2', alpha=1e-3, max_iter= 5, random_state=42))
+clf_s= make_pipeline(CountVectorizer(), TfidfTransformer(), SGDClassifier(loss='hinge', penalty='l2', alpha=1e-3, max_iter=5, random_state=42))
 
 bayes_10_fold = cross_val_score(clf_b, x_text, y, cv=10)
 svm_10_fold = cross_val_score(clf_s, x_text, y, cv=10)
